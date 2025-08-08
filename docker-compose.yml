@@ -10,22 +10,10 @@ services:
     depends_on:
       - mongo
     labels:
-      - "traefik.http.routers.makesimpleform.rule=Host(`api.makesimpleform.com.br`)"
-      - "traefik.http.services.makesimpleform.loadbalancer.server.port=3000"
-    networks:
-      - web
-
-  traefik:
-    image: traefik:v2.11
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
-    ports:
-      - "80:80"
-      - "8080:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    - "traefik.http.routers.makesimpleform.rule=Host(`api.makesimpleform.com.br`)"
+    - "traefik.http.routers.makesimpleform.entrypoints=websecure"
+    - "traefik.http.routers.makesimpleform.tls.certresolver=letsencrypt"
+    - "traefik.http.services.makesimpleform.loadbalancer.server.port=3000"
     networks:
       - web
 
