@@ -1,23 +1,47 @@
-# Dockerfile
-FROM node:20-alpine
+# =========================
+# 1ª Etapa: Build da aplicação
+# =========================
+FROM node:20-alpine AS builder
 
-# Cria diretório de trabalho
 WORKDIR /app
 
-# Copia apenas arquivos de dependência para instalar mais rápido em cache
+# Copia apenas arquivos de dependências
 COPY package*.json ./
 
-# Instala dependências
-RUN npm install
+# Instala todas as dependências (incluindo dev)
+RUN npm ci
 
-# Copia todo o restante do código
+# Copia o restante do código
 COPY . .
 
-# Instala o CLI do Nest (útil para rodar comandos dentro do contêiner)
-RUN npm install -g @nestjs/cli
+# Build da aplicação (Nest gera dist/)
+RUN npm run build
 
-# Porta padrão
+
+# =========================
+# 2ª Etapa: Produção
+# =========================
+FROM node:20-alpine AS production
+
+WORKDIR /app
+
+# Copia apenas arquivos de dependências
+COPY package*.json ./
+
+# Instala apenas dependências de produção
+RUN npm ci --only=production
+
+# Copia os arquivos compilados da etapa anterior
+COPY --from=builder /app/dist ./dist
+
+# Se houver outras pastas necessárias (ex: public, views), copiar também:
+# COPY --from=builder /app/public ./public
+
+# Define variável de ambiente para produção
+ENV NODE_ENV=production
+
+# Porta padrão do NestJS
 EXPOSE 3000
 
-# Comando padrão (é sobrescrito no docker-compose para dev)
-CMD ["npm", "run", "start"]
+# Comando de inicialização
+CMD ["node", "dist/main.js"]
