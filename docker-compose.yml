@@ -1,0 +1,58 @@
+services:
+  makesimpleform:
+    build: .
+    container_name: makesimpleform-backend
+    volumes:
+      - .:/app:Z
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/dev-db
+    command: npm run start:dev
+    depends_on:
+      - mongo
+    labels:
+      - "traefik.http.routers.makesimpleform.rule=Host(`api.makesimpleform.com.br`)"
+      - "traefik.http.services.makesimpleform.loadbalancer.server.port=3000"
+    networks:
+      - web
+
+  traefik:
+    image: traefik:v2.11
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - web
+
+  mongo:
+    image: mongo:6
+    container_name: mongo-db
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-ui
+    ports:
+      - '8081:8081'
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:
+
+networks:
+  web:
+    external: false
