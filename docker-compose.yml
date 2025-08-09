@@ -1,19 +1,24 @@
 services:
-  makesimpleform:
-    build: .
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${ENVIRONMENT}   # pode ser 'production' ou 'development'
     container_name: makesimpleform-backend
-    volumes:
-      - .:/app:Z
-    environment:
-      - MONGO_URL=mongodb://mongo:27017/dev-db
-    command: npm run start:dev
     depends_on:
       - mongo
+    command: ${DEV_COMMAND}
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    volumes:
+      - ${DEV_MOUNT_VOLUME:+.:/app:Z}
+    restart: always
     labels:
-    - "traefik.http.routers.makesimpleform.rule=Host(`api.makesimpleform.com.br`)"
-    - "traefik.http.routers.makesimpleform.entrypoints=websecure"
-    - "traefik.http.routers.makesimpleform.tls.certresolver=letsencrypt"
-    - "traefik.http.services.makesimpleform.loadbalancer.server.port=3000"
+      - "traefik.enable=$${ENABLE_TRAEFIK}"
+      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_URL}`)"
+      - "traefik.http.routers.${APP_NAME}.entrypoints=${TRAEFIK_ENTRYPOINT}"
+      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${TRAEFIK_CERTRESOLVER}"
+      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
     networks:
       - web
 
@@ -21,26 +26,35 @@ services:
     image: mongo:6
     container_name: mongo-db
     ports:
-      - '27017:27017'
+      - "${MONGODB_PORT}:${MONGODB_PORT}"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
     volumes:
       - mongo-data:/data/db
+    networks:
+      - web
 
   mongo-express:
-    image: mongo-express
+    image: mongo-express:latest
     container_name: mongo-ui
     ports:
-      - '8081:8081'
+      - "${ME_PORT}:${ME_PORT}"
     environment:
-      - ME_CONFIG_MONGODB_SERVER=mongo
-      - ME_CONFIG_MONGODB_PORT=27017
-      - ME_CONFIG_BASICAUTH_USERNAME=admin
-      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+      - ME_CONFIG_MONGODB_SERVER=${MONGODB_SERVER}
+      - ME_CONFIG_MONGODB_PORT=${MONGODB_PORT}
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_ROOT_USERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_ROOT_PASSWORD}
+      - ME_CONFIG_BASICAUTH_USERNAME=${ME_USERNAME}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${ME_PASSWORD}
     depends_on:
       - mongo
+    networks:
+      - web
 
 volumes:
   mongo-data:
 
 networks:
   web:
-    external: false
+    external: true

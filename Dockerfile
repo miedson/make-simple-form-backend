@@ -17,7 +17,6 @@ COPY . .
 # Build da aplicação (Nest gera dist/)
 RUN npm run build
 
-
 # =========================
 # 2ª Etapa: Produção
 # =========================
@@ -43,5 +42,25 @@ ENV NODE_ENV=production
 # Porta padrão do NestJS
 EXPOSE 3000
 
-# Comando de inicialização
+# Comando de inicialização padrão para produção
 CMD ["node", "dist/main.js"]
+
+
+# =========================
+# 3ª Etapa: Desenvolvimento (opcional)
+# =========================
+FROM node:20-alpine AS development
+
+WORKDIR /app
+
+# Copia todos arquivos
+COPY . .
+
+# Instala todas as dependências (incluindo dev)
+RUN npm ci
+
+# Expor porta dev
+EXPOSE 3000
+
+# Comando para rodar em modo dev (watch)
+CMD ["npm", "run", "start:dev"]
