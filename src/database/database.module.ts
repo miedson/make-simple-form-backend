@@ -13,9 +13,9 @@ const databaseProviders = [
       const port = configService.get<number>('database.port');
       const database = configService.get<string>('database.dbname');
       const username = configService.get<string>('database.username');
-      const password = configService.get<string>('database.password');
+      const password = configService.get<string>('database.password') ?? '';
 
-      const mongoUrl = `mongodb://${username}:${password}@${server}:${port}/${database}?authSource=admin`;
+      const mongoUrl = `mongodb://${username}:${encodeURIComponent(password)}@${server}:${port}/${database}?authSource=admin`;
       return mongoose.connect(mongoUrl);
     },
   },

@@ -3,22 +3,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: ${ENVIRONMENT}   # pode ser 'production' ou 'development'
+      target: ${ENVIRONMENT}
     container_name: makesimpleform-backend
     depends_on:
       - mongo
     command: ${DEV_COMMAND}
     ports:
-      - "${APP_PORT}:${APP_PORT}"
+      - "3000:3000"
     volumes:
-      - ${DEV_MOUNT_VOLUME:+.:/app:Z}
+      - .:/app:Z
     restart: always
     labels:
-      - "traefik.enable=$${ENABLE_TRAEFIK}"
-      - "traefik.http.routers.${APP_NAME}.rule=Host(`${APP_URL}`)"
-      - "traefik.http.routers.${APP_NAME}.entrypoints=${TRAEFIK_ENTRYPOINT}"
-      - "traefik.http.routers.${APP_NAME}.tls.certresolver=${TRAEFIK_CERTRESOLVER}"
-      - "traefik.http.services.${APP_NAME}.loadbalancer.server.port=${APP_PORT}"
+      - "traefik.enable=false"
     networks:
       - web
 
@@ -44,7 +40,7 @@ services:
       - ME_CONFIG_MONGODB_SERVER=${MONGODB_SERVER}
       - ME_CONFIG_MONGODB_PORT=${MONGODB_PORT}
       - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_ROOT_USERNAME}
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_ROOT_PASSWORD}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${ME_MONGODB_ADMINPASSWORD}
       - ME_CONFIG_BASICAUTH_USERNAME=${ME_USERNAME}
       - ME_CONFIG_BASICAUTH_PASSWORD=${ME_PASSWORD}
     depends_on:
