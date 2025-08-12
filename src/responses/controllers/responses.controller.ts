@@ -1,15 +1,18 @@
-import { Controller, Post, Param, Body } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
 import { ResponsesService } from '../services/responses.service';
-import { Responses } from '../contract/response.contract';
-
-export type ResponseDto = Responses;
-
+import { Response } from '../contract/response.contract';
 @Controller('responses')
 export class ResponsesController {
   constructor(private readonly responsesService: ResponsesService) {}
 
   @Post(':id/save')
-  async saveResponse(@Param('id') formId: string, @Body() data: ResponseDto) {
+  async save(@Param('id') formId: string, @Body() data: Response[]) {
     await this.responsesService.save(formId, data);
+  }
+
+  @Post(':id/send')
+  @HttpCode(200)
+  async send(@Param('id') formId: string, @Body() data: Response[]) {
+    await this.responsesService.sendByEmail(formId, data);
   }
 }

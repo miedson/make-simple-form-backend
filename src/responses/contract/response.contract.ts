@@ -1,17 +1,17 @@
 import { Document } from 'mongoose';
 
-export type Responses = {
+export type Response = {
   element_id: string;
   question: string | null | undefined;
   response:
     | string
-    | { label: string; value: string }
-    | { label: string; value: string }[]
+    | { description: string; value: string }
+    | { description: string; value: string }[]
     | undefined;
 };
 
-export interface Response extends Document {
+export interface Responses extends Document {
   id: string;
   form_id: string;
-  responses: Responses;
+  responses: Response[];
 }

@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import { Response } from '../contract/response.contract';
+import { Responses } from '../contract/response.contract';
 
-export const responseSchema = new mongoose.Schema<Response>(
+export const responseSchema = new mongoose.Schema<Responses>(
   {
     form_id: { type: String },
-    responses: { type: {} },
+    responses: { type: [] },
   },
   { timestamps: true },
 );

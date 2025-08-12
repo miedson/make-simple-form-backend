@@ -1,0 +1,109 @@
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+  }
+
+  .form {
+    background: #fff;
+    max-width: 700px;
+    margin: 20px auto 0;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border-top: 4px solid #3b82f6;
+    padding: 0;
+  }
+
+  .form-header {
+    background-color: #3b82f6;
+    color: white;
+    text-align: center;
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .form-name {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .form-description {
+    padding: 10px 20px;
+    color: #555;
+    font-size: 0.95rem;
+  }
+
+  .responses {
+    background: white;
+    max-width: 700px;
+    margin: 0 auto 20px;
+    padding: 20px;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #eee;
+    border-top: none;
+  }
+
+  .response-item {
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    background: #fafafa;
+  }
+
+  .response-item h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  .response-item ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .response-item li {
+    background: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    border: 1px solid #ddd;
+  }
+
+  .response-item p {
+    margin: 0;
+    background: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+</style>
+
+<div class="form">
+  <div class="form-header">
+    <h1 class="form-name">{{name}}</h1>
+  </div>
+  <p class="form-description">{{description}}</p>
+</div>
+
+<div class="responses">
+  {{#each responses}}
+    <div class="response-item">
+      <h3>{{question}}</h3>
+
+      {{#if (isArray response)}}
+        <ul>
+          {{#each response}}
+            <li>{{this.description}}</li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p>{{response}}</p>
+      {{/if}}
+    </div>
+  {{/each}}
+</div>

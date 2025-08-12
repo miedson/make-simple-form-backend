@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Model, QueryOptions, UpdateQuery } from 'mongoose';
 import { DatabaseAdapter } from './database.adapter';
 
 @Injectable()
 export class MongoAdapter<T> implements DatabaseAdapter {
-  constructor(@Inject('FORM_MODEL') private readonly formModel: Model<T>) {}
+  constructor(private readonly model: Model<T>) {}
 
   async create<T>(data: T): Promise<void> {
-    const createdDocument = new this.formModel(data);
+    const createdDocument = new this.model(data);
     await createdDocument.save();
   }
 
@@ -16,7 +16,7 @@ export class MongoAdapter<T> implements DatabaseAdapter {
     data: UpdateQuery<T>,
     options?: QueryOptions,
   ): Promise<T | null> {
-    return await this.formModel.findByIdAndUpdate(
+    return await this.model.findByIdAndUpdate(
       {
         _id,
       },
@@ -26,6 +26,6 @@ export class MongoAdapter<T> implements DatabaseAdapter {
   }
 
   async findById<T>(id: string): Promise<T | null> {
-    return await this.formModel.findById(id);
+    return await this.model.findById(id);
   }
 }

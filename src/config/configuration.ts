@@ -19,6 +19,13 @@ export interface EnvironmentVariables {
     entrypoint: string;
     certresolver: string;
   };
+  mail: {
+    host: string;
+    auth: {
+      user: string;
+      password: string;
+    };
+  };
 }
 
 export default () => ({
@@ -29,5 +36,14 @@ export default () => ({
     dbname: process.env.MONGODB_DATABASE,
     username: process.env.MONGODB_ROOT_USERNAME,
     password: process.env.MONGODB_ROOT_PASSWORD,
+  },
+  mail: {
+    host: process.env.MAIL_HOST,
+    port: process.env.MAIL_PORT,
+    auth: {
+      user: process.env.MAIL_AUTH_USER,
+      pass: process.env.MAIL_AUTH_PASSWORD,
+    },
+    from: process.env.MAIL_FROM,
   },
 });
