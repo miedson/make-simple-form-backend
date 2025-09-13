@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
+import { availablePositions, availableTypes } from '../constants/element-types';
 import type { Element } from '../contracts/element.contract';
-import { availableTypes } from '../constants/element-types';
 
 export const ElementSchema = new mongoose.Schema<Element>(
   {
@@ -23,7 +23,13 @@ export const ElementSchema = new mongoose.Schema<Element>(
       },
     ],
     required: { type: Boolean, default: false },
-    elements: { type: [], default: [] },
+    multiple: { type: Boolean, default: false },
+    order: { type: Number, default: false },
+    position: {
+      type: String,
+      enum: availablePositions,
+      require: false,
+    },
   },
   { _id: false },
 );

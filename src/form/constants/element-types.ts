@@ -8,3 +8,5 @@ export const availableTypes = [
   'date',
   'container',
 ] as const;
+
+export const availablePositions = ['center', 'left', 'right'] as const;

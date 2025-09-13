@@ -1,4 +1,5 @@
 import { Expose, Type } from 'class-transformer';
+import { availablePositions } from '../../constants/element-types';
 
 class OptionResponseDto {
   @Expose()
@@ -27,13 +28,19 @@ class ElementResponseDto {
   label?: string;
 
   @Expose()
-  name?: string;
-
-  @Expose()
   placeholder?: string;
 
   @Expose()
   required?: boolean;
+
+  @Expose()
+  multiple?: boolean;
+
+  @Expose()
+  order?: number;
+
+  @Expose()
+  position: keyof typeof availablePositions;
 
   @Expose()
   @Type(() => OptionResponseDto)

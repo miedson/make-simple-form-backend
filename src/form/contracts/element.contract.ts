@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { availablePositions } from '../constants/element-types';
 
 export interface Element extends Document {
   type: 'input' | 'select' | 'radio' | 'checkbox' | 'textarea';
@@ -10,5 +11,7 @@ export interface Element extends Document {
     value: string;
   }[];
   required?: boolean;
-  elements: Element[];
+  multiple?: boolean;
+  order?: number;
+  position: keyof typeof availablePositions;
 }
