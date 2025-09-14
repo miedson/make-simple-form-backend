@@ -7,14 +7,15 @@ services:
     container_name: makesimpleform-backend
     depends_on:
       - mongo
+      - postgres
     command: ${DEV_COMMAND}
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - .:/app:Z
     restart: always
     labels:
-      - "traefik.enable=false"
+      - 'traefik.enable=false'
     networks:
       - web
 
@@ -22,7 +23,7 @@ services:
     image: mongo:6
     container_name: mongo-db
     ports:
-      - "${MONGODB_PORT}:${MONGODB_PORT}"
+      - '${MONGODB_PORT}:${MONGODB_PORT}'
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
@@ -35,7 +36,7 @@ services:
     image: mongo-express:latest
     container_name: mongo-ui
     ports:
-      - "${ME_PORT}:${ME_PORT}"
+      - '${ME_PORT}:${ME_PORT}'
     environment:
       - ME_CONFIG_MONGODB_SERVER=${MONGODB_SERVER}
       - ME_CONFIG_MONGODB_PORT=${MONGODB_PORT}
@@ -48,8 +49,36 @@ services:
     networks:
       - web
 
+  postgres:
+    image: postgres:15
+    container_name: postgres-db
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - web
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin-ui
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - '${PGADMIN_PORT}:80'
+    depends_on:
+      - postgres
+    networks:
+      - web
+
 volumes:
   mongo-data:
+  postgres-data:
 
 networks:
   web:

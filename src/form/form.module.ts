@@ -17,7 +17,7 @@ import { Form } from './contracts/form.contract';
       provide: 'FORM_MODEL',
       useFactory: (connection: Connection) =>
         connection.model('Form', formSchema),
-      inject: ['DATABASE_CONNECTION'],
+      inject: ['MONGO_CONNECTION'],
     },
     {
       provide: 'FormDatabaseAdapter',
