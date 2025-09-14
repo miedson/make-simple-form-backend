@@ -14,7 +14,7 @@ import { DatabaseModule } from 'src/database/database.module';
       provide: 'RESPONSES_MODEL',
       useFactory: (connection: Connection) =>
         connection.model('Responses', responseSchema),
-      inject: ['DATABASE_CONNECTION'],
+      inject: ['MONGO_CONNECTION'],
     },
   ],
 })
