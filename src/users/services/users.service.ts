@@ -1,7 +1,7 @@
 import { UserEntity } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { OrganizationService } from 'src/organization/services/organization.service';
@@ -14,17 +14,13 @@ export class UsersService {
     private readonly organizationService: OrganizationService,
   ) {}
 
-  async findByUserName(username: string): Promise<UserEntity | null> {
+  async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.usersRepository.findOne({
       where: {
-        username,
+        email,
       },
       relations: ['organization'],
     });
-
-    if (!user) {
-      throw new Error(`User with username ${username} not found`);
-    }
 
     return user;
   }
@@ -38,7 +34,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new Error(`User with ID ${id} not found`);
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
 
     return user;
